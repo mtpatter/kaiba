@@ -24,8 +24,10 @@ class Bootlier(object):
 
     def _calc_trimmed_means(self, samples, k):
         samples['sample'] = samples['sample'].apply(lambda x: np.sort(x))
-        samples['trimmed_mean'] = samples['sample'].apply(lambda x: np.mean(x[k:-k]))
-        samples['mtm'] = samples['mean'].values - samples['trimmed_mean'].values
+        samples['trimmed_mean'] = samples['sample'].apply(lambda x:
+                                                          np.mean(x[k:-k]))
+        samples['mtm'] = (samples['mean'].values -
+                          samples['trimmed_mean'].values)
         return samples
 
     def boot(self, npoints, z, b, k=2):
