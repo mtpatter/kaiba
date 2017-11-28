@@ -58,7 +58,7 @@ class Bootlier(object):
         -------
         hratio : `float`
             The ratio of the original h value to the smallest value of h for
-            which the KDE has only one peak.
+            which the KDE has only one peak. Less than one contains outliers.
         """
         mtmlist = self.samples['mtm']
         mtmrange = max(mtmlist) - min(mtmlist)
