@@ -28,7 +28,7 @@ class Bootlier(object):
         samples['mtm'] = samples['mean'].values - samples['trimmed_mean'].values
         return samples
 
-    def boot(self, npoints, z, b, k):
+    def boot(self, npoints, z, b, k=2):
         """
         Parameters
         ----------
