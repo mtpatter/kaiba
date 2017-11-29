@@ -63,13 +63,11 @@ class Bootlier(object):
         mtmlist = self.samples['mtm']
         mtmrange = max(mtmlist) - min(mtmlist)
         x = np.arange(min(mtmlist), max(mtmlist), mtmrange/100.)
-        hrange = np.arange(np.std(mtmlist)/10.,
-                           np.std(mtmlist)*50.,
-                           np.std(mtmlist)/20.)
         widths = mtmrange * np.arange(0.01, 1, 0.05)  # widths between peaks
 
         kde_orig = gaussian_kde(mtmlist, bw_method='silverman')
         self.horig = kde_orig.factor
+        hrange = np.arange(0.01*self.horig, 10*self.horig, 0.01*self.horig)
         self.horig_kde = kde_orig
         peakind = signal.find_peaks_cwt(-kde_orig(x), widths)
         self.horig_peak = [(x[peak], kde_orig(x)[peak]) for peak in peakind]
