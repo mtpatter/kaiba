@@ -3,15 +3,18 @@ import pandas as pd
 import peakutils
 from scipy.stats.kde import gaussian_kde
 
-__all__ = ['Bootlier']
+__all__ = ['Bootlier', 'boot', 'Hratio', 'find_hratio']
 
 
 class Bootlier(object):
-    """Calculates the MTM for a list of points for bootlier."""
+    """Samples and MTM for a list of points for bootlier."""
 
-    def __init__(self):
-
-        pass
+    def __init__(self, npoints, z, b, k):
+        df = self._make_samples(npoints, z, b)
+        df = self._calc_means(df)
+        df = self._calc_trimmed_means(df, k)
+        self.samples = df
+        self.mtm = df['mtm']
 
     def _make_samples(self, npoints, z, b):
         samples = pd.DataFrame(columns=['sample'])
@@ -32,35 +35,28 @@ class Bootlier(object):
                           samples['trimmed_mean'].values)
         return samples
 
-    def boot(self, npoints, z, b, k=2):
-        """
-        Parameters
-        ----------
-        npoints : `list`
-            List of N points from which to draw samples.
-        z : `int`
-            Number of points in each bootstrapped sample.
-        b : `int`
-            Number of bootstraps to draw.
-        k : `int`
-            Number of points to trim from each extreme side for
-            the trimmed mean.
-        """
-        df = self._make_samples(npoints, z, b)
-        df = self._calc_means(df)
-        df = self._calc_trimmed_means(df, k)
-        self.samples = df
-        return df
 
-    def find_hratio(self):
-        """
-        Returns
-        -------
-        hratio : `float`
-            The ratio of the original h value to the smallest value of h for
-            which the KDE has only one peak. Less than one contains outliers.
-        """
-        mtmlist = self.samples['mtm']
+def boot(npoints, z, b, k=2):
+    """
+    Parameters
+    ----------
+    npoints : `list`
+        List of N points from which to draw samples.
+    z : `int`
+        Number of points in each bootstrapped sample.
+    b : `int`
+        Number of bootstraps to draw.
+    k : `int`
+        Number of points to trim from each extreme side for
+        the trimmed mean.
+    """
+    samples = Bootlier(npoints, z, b, k)
+    return samples
+
+
+class Hratio(object):
+
+    def __init__(self, mtmlist):
         mtmrange = max(mtmlist) - min(mtmlist)
         x = np.arange(min(mtmlist), max(mtmlist), mtmrange/100.)
 
@@ -88,4 +84,21 @@ class Bootlier(object):
         self.hcrit_peak = [(x[peak], kde(x)[peak]) for peak in peakind]
         self.hcrit_kde = kde
         self.hratio = self.horig/hcrit
-        return self.hratio
+        self.hratio
+
+
+def find_hratio(mtmlist):
+    """
+    Parameters
+    ----------
+    mtmlist : `list`
+        List of points for making KDEs.
+    Returns
+    -------
+    hratio : Hratio
+        The ratio of the original h value to the smallest value of h for
+        which the KDE has only one peak and other parameters.
+        Less than one contains outliers.
+    """
+    hratio = Hratio(mtmlist)
+    return hratio
