@@ -14,7 +14,6 @@ class Bootlier(object):
         df = self._calc_means(df)
         df = self._calc_trimmed_means(df, k)
         self.samples = df
-        self.mtm = df['mtm']
 
     def _make_samples(self, npoints, z, b):
         samples = pd.DataFrame(columns=['sample'])
@@ -51,7 +50,7 @@ def boot(npoints, z, b, k=2):
         the trimmed mean.
     """
     samples = Bootlier(npoints, z, b, k)
-    return samples
+    return samples.samples
 
 
 class Hratio(object):
