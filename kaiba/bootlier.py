@@ -35,7 +35,7 @@ class Bootlier(object):
         return samples
 
 
-def boot(npoints, z, b, k=2):
+def boot(npoints, z=None, b=500, k=2):
     """
     Parameters
     ----------
@@ -49,6 +49,8 @@ def boot(npoints, z, b, k=2):
         Number of points to trim from each extreme side for
         the trimmed mean.
     """
+    if z is None:
+        z = len(npoints)
     samples = Bootlier(npoints, z, b, k)
     return samples.samples
 
