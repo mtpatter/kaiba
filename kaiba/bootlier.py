@@ -63,7 +63,7 @@ class Hratio(object):
 
         kde_orig = gaussian_kde(mtmlist, bw_method='silverman')
         self.horig = kde_orig.factor
-        hrange = np.arange(0.1*self.horig, 10*self.horig, 0.05*self.horig)
+        hrange = np.arange(0.1*self.horig, 10*self.horig, 0.02*self.horig)
         self.horig_kde = kde_orig
         peakind = peakutils.indexes(kde_orig(x), thres=0.02/max(kde_orig(x)))
         self.horig_peak = [(x[peak], kde_orig(x)[peak]) for peak in peakind]
