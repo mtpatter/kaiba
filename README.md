@@ -16,6 +16,6 @@ Run Jupyter notebooks like this:
 ```
 $ docker run -it --rm \
 	-v $PWD:/home/jovyan/work:rw \
-	-p 8888:8888 -p 4040:4040 \
+	-p 8888:8888 \
 	kaiba
 ```
