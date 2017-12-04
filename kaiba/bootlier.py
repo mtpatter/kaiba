@@ -139,15 +139,16 @@ def find_outliers(points, sensitivity=1.):
     """
 
     points.sort()
-    for i in range(1, int(len(points)/2)):
-        a = points[0:-i]
-        if len(a) > 1:
-            boota = boot(a)
-            ha = find_hratio(boota['mtm'])
-            hrat = ha.hratio
-            if hrat >= sensitivity:
-                remaining = a
-                break
+    for i in range(0, int(len(points)/2)):
+        if i != 0:
+            a = points[0:-i]
+            if len(a) > 1:
+                boota = boot(a)
+                ha = find_hratio(boota['mtm'])
+                hrat = ha.hratio
+                if hrat >= sensitivity:
+                    remaining = a
+                    break
 
         b = points[i:]
         if len(b) > 1:
