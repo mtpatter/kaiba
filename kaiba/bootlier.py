@@ -131,8 +131,8 @@ def find_outliers(points, sensitivity=1.):
         List of points for which to find outliers.
     sensitivity : `float`
         Sensitivity threshold for the cutoff hratio.
-        Default of 1. Less than 1 is more sensitive to outliers,
-        greater than 1 is less sensitive.
+        Default of 1. Less than 1 is less sensitive to outliers,
+        greater than 1 is more sensitive.
     Returns
     -------
     (hratio, outliers)
