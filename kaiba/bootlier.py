@@ -79,31 +79,34 @@ class Hratio(object):
         mtmrange = max(mtmlist) - min(mtmlist)
         x = np.arange(min(mtmlist), max(mtmlist), mtmrange/100.)
 
-        kde_orig = gaussian_kde(mtmlist, bw_method='silverman')
-        self.horig = kde_orig.factor
-        hrange = np.arange(0.1*self.horig, 10*self.horig, 0.02*self.horig)
-        self.horig_kde = kde_orig
-        peakind = peakutils.indexes(kde_orig(x), thres=0.02/max(kde_orig(x)))
-        self.horig_peak = [(x[peak], kde_orig(x)[peak]) for peak in peakind]
-        self.numpeaks = len(peakind)
+        try:
+            kde_orig = gaussian_kde(mtmlist, bw_method='silverman')
+            self.horig = kde_orig.factor
+            hrange = np.arange(0.1*self.horig, 10*self.horig, 0.02*self.horig)
+            self.horig_kde = kde_orig
+            peakind = peakutils.indexes(kde_orig(x), thres=0.02/max(kde_orig(x)))
+            self.horig_peak = [(x[peak], kde_orig(x)[peak]) for peak in peakind]
+            self.numpeaks = len(peakind)
 
-        i = 0
-        peaks = 100
-        while peaks > 1:
-            hcrit = hrange[i]
-            kde = gaussian_kde(mtmlist, bw_method=hcrit)
+            i = 0
+            peaks = 100
+            while peaks > 1:
+                hcrit = hrange[i]
+                kde = gaussian_kde(mtmlist, bw_method=hcrit)
+                peakind = peakutils.indexes(kde(x), thres=0.02/max(kde(x)))
+                peaks = len(peakind)
+                i += 1
+                peaks = len(peakind)
+            self.hcrit = hrange[i-1]
+            kde = gaussian_kde(mtmlist, bw_method=hrange[i-1])
             peakind = peakutils.indexes(kde(x), thres=0.02/max(kde(x)))
-            peaks = len(peakind)
-            kde.set_bandwidth(hcrit)
-            i += 1
-            peaks = len(peakind)
-        self.hcrit = hrange[i-1]
-        kde = gaussian_kde(mtmlist, bw_method=hrange[i-1])
-        peakind = peakutils.indexes(kde(x), thres=0.02/max(kde(x)))
-        self.hcrit_peak = [(x[peak], kde(x)[peak]) for peak in peakind]
-        self.hcrit_kde = kde
-        self.hratio = self.horig/hcrit
-        self.hratio
+            self.hcrit_peak = [(x[peak], kde(x)[peak]) for peak in peakind]
+            self.hcrit_kde = kde
+            self.hratio = self.horig/hcrit
+            self.hratio
+        except:
+            self.hratio = 100
+            self.numpeaks = "Unknown"
 
 
 def find_hratio(mtmlist):
