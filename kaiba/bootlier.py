@@ -3,7 +3,25 @@ import pandas as pd
 import peakutils
 from scipy.stats.kde import gaussian_kde
 
-__all__ = ['Bootlier', 'boot', 'Hratio', 'find_hratio']
+__all__ = ['Bootlier', 'boot', 'Hratio', 'find_hratio', 'find_outliers']
+
+
+def _part(n, k):
+    """Integer partitioning
+       from https://stackoverflow.com/questions/18503096/python-integer-partitioning-with-given-k-partitions
+    """
+    def _kpart(n, k, pre):
+        if n <= 0:
+            return []
+        if k == 1:
+            if n <= pre:
+                return [[n]]
+            return []
+        ret = []
+        for i in range(min(pre, n), 0, -1):
+            ret += [[i] + sub for sub in _kpart(n-i, k-1, i)]
+        return ret
+    return _kpart(n, k, n)
 
 
 class Bootlier(object):
@@ -103,3 +121,65 @@ def find_hratio(mtmlist):
     """
     hratio = Hratio(mtmlist)
     return hratio
+
+
+def find_outliers(points, sensitivity=1.):
+    """Find outliers in a list using a given sensitivity parameter.
+    Parameters
+    ----------
+    points : `list`
+        List of points for which to find outliers.
+    sensitivity : `float`
+        Sensitivity threshold for the cutoff hratio.
+        Default of 1. Less than 1 is more sensitive to outliers,
+        greater than 1 is less sensitive.
+    Returns
+    -------
+    (hratio, outliers)
+    """
+
+    points.sort()
+    for i in range(1, int(len(points)/2)):
+        a = points[0:-i]
+        if len(a) > 1:
+            boota = boot(a)
+            ha = find_hratio(boota['mtm'])
+            hrat = ha.hratio
+            if hrat >= sensitivity:
+                remaining = a
+                break
+
+        b = points[i:]
+        if len(b) > 1:
+            bootb = boot(b)
+            hb = find_hratio(bootb['mtm'])
+            hrat = hb.hratio
+            if hrat >= sensitivity:
+                remaining = b
+                break
+
+        p = _part(i, 2)
+
+        for pair in p:
+            a = points[pair[0]:-pair[1]]
+            if len(a) > 1:
+                boota = boot(a)
+                ha = find_hratio(boota['mtm'])
+                hrat = ha.hratio
+                if hrat >= sensitivity:
+                    remaining = a
+                    break
+
+            b = points[pair[1]:-pair[0]]
+            if len(b) > 1:
+                bootb = boot(b)
+                hb = find_hratio(bootb['mtm'])
+                hrat = hb.hratio
+                if hrat >= sensitivity:
+                    remaining = b
+                    break
+        if hrat >= sensitivity:
+                break
+
+    outliers = [x for x in points if x not in remaining]
+    return (hrat, outliers)
