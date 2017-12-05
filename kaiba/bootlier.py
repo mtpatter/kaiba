@@ -136,9 +136,12 @@ def find_outliers(origpoints, sensitivity=1., detrend=False):
         Sensitivity threshold for the cutoff hratio.
         Default of 1. Less than 1 is less sensitive to outliers,
         greater than 1 is more sensitive.
+    detrend : `boolean`
+        If set to True, applies differencing to detrend the list.
+        Default is False.
     Returns
     -------
-    outliers
+    indices, outliers
     """
 
     if detrend is True:
