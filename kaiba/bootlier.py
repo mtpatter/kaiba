@@ -96,7 +96,6 @@ class Hratio(object):
                 peakind = peakutils.indexes(kde(x), thres=0.02/max(kde(x)))
                 peaks = len(peakind)
                 i += 1
-                peaks = len(peakind)
             self.hcrit = hrange[i-1]
             kde = gaussian_kde(mtmlist, bw_method=hrange[i-1])
             peakind = peakutils.indexes(kde(x), thres=0.02/max(kde(x)))
