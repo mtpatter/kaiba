@@ -137,7 +137,7 @@ def find_outliers(npoints, sensitivity=1.):
         greater than 1 is more sensitive.
     Returns
     -------
-    (hratio, outliers)
+    outliers
     """
 
     points = sorted(npoints)
@@ -185,4 +185,4 @@ def find_outliers(npoints, sensitivity=1.):
                 break
 
     outliers = [x for x in points if x not in remaining]
-    return (hrat, outliers)
+    return outliers
