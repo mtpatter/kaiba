@@ -126,11 +126,11 @@ def find_hratio(mtmlist):
     return hratio
 
 
-def find_outliers(points, sensitivity=1.):
+def find_outliers(npoints, sensitivity=1.):
     """Find outliers in a list using a given sensitivity parameter.
     Parameters
     ----------
-    points : `list`
+     npoints : `list`
         List of points for which to find outliers.
     sensitivity : `float`
         Sensitivity threshold for the cutoff hratio.
@@ -141,7 +141,7 @@ def find_outliers(points, sensitivity=1.):
     (hratio, outliers)
     """
 
-    points.sort()
+    points = sorted(npoints)
     for i in range(0, int(len(points)/2)):
         if i != 0:
             a = points[0:-i]
