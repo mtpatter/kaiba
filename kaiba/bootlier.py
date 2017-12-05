@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import itertools
 import peakutils
 from scipy.stats.kde import gaussian_kde
 
@@ -125,7 +126,7 @@ def find_hratio(mtmlist):
     return hratio
 
 
-def find_outliers(npoints, sensitivity=1.):
+def find_outliers(origpoints, sensitivity=1., detrend=False):
     """Find outliers in a list using a given sensitivity parameter.
     Parameters
     ----------
@@ -140,7 +141,16 @@ def find_outliers(npoints, sensitivity=1.):
     outliers
     """
 
-    points = sorted(npoints)
+    if detrend is True:
+        i1, i2 = itertools.tee(iter(origpoints))
+        next(i2)
+        lst = [y-x for x, y in zip(i1, i2)]
+        #lst.insert(0, origpoints[0])
+        npoints = lst
+        points = sorted(npoints)
+    else:
+        points = sorted(origpoints)
+
     for i in range(0, int(len(points)/2)):
         if i != 0:
             a = points[0:-i]
@@ -184,5 +194,18 @@ def find_outliers(npoints, sensitivity=1.):
         if hrat >= sensitivity:
                 break
 
-    outliers = [x for x in points if x not in remaining]
-    return outliers
+    if detrend is True:
+        outtrend = [x for x in npoints if x not in remaining]
+        outindex = [npoints.index(x) for x in outtrend]
+        outliers = [origpoints[i] for i in outindex]
+
+        return outindex, outliers
+    else:
+        try:
+            outliers = [x for x in origpoints if x not in remaining]
+            outindex = [origpoints.tolist().index(x) for x in outliers]
+        except AttributeError:
+            outliers = [x for x in origpoints if x not in remaining]
+            outindex = [origpoints.index(x) for x in outliers]
+
+        return outindex, outliers
