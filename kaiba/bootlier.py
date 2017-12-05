@@ -145,7 +145,7 @@ def find_outliers(origpoints, sensitivity=1., detrend=False):
         i1, i2 = itertools.tee(iter(origpoints))
         next(i2)
         lst = [y-x for x, y in zip(i1, i2)]
-        #lst.insert(0, origpoints[0])
+        lst.insert(0, origpoints[0])
         npoints = lst
         points = sorted(npoints)
     else:
