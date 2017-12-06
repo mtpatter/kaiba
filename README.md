@@ -8,7 +8,7 @@ Bootlier implementation for anomaly detection
 Build Docker container for notebooks with dependencies:
 
 ```
-$ docker build -t "kaiba"
+$ docker build -t "kaiba" .
 ```
 
 Run Jupyter notebooks like this:
